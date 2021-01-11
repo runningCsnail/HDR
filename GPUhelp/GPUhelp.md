@@ -43,7 +43,7 @@ $ nvidia-smi
   $ scp help.md cchen@10.0.11.222:help.md
   ```
 
-  如图：![scp命令效果](/scp命令效果.png)
+  如图：![scp命令效果](～/scp命令效果.png)
   
   其中`runningcsnail`是本地用户名字，`～/Documents/deeplearning/GPUhelp`是文件所属目录，输入`scp`命令行后，根据提示输入密码，即可copy文件到服务器。
 
