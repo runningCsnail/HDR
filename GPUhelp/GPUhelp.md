@@ -43,7 +43,7 @@ $ nvidia-smi
   $ scp help.md cchen@10.0.11.222:help.md
   ```
 
-  如图：![scp命令效果](/home/runningcsnail/Documents/deeplearning/GPUhelp/scp命令效果.png)其中`runningcsnail`是本地用户名字，`～/Documents/deeplearning/GPUhelp`是文件所属目录，输入`scp`命令行后，根据提示输入密码，即可copy文件到服务器。
+  如图：![scp命令效果](GPUhelp/scp命令效果.png)其中`runningcsnail`是本地用户名字，`～/Documents/deeplearning/GPUhelp`是文件所属目录，输入`scp`命令行后，根据提示输入密码，即可copy文件到服务器。
 
 + 将远程文件拷贝到本地，在**本地用户目录**下，一般命令如下：
 
@@ -55,9 +55,9 @@ $ nvidia-smi
 
 参考步骤`1.连接/断开GPU`，连接GPU，使用`ls`或`ll`命令查看文件，如图：
 
-![连接GPU](/home/runningcsnail/Documents/deeplearning/GPUhelp/连接GPU.png)
+![连接GPU](GPUhelp/连接GPU.png)
 
-![查看服务器文件](/home/runningcsnail/Documents/deeplearning/GPUhelp/查看服务器文件.png)
+![查看服务器文件](查看服务器文件.png)
 
 ## 3.3. 拷贝整个文件夹：
 
