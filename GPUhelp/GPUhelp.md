@@ -91,11 +91,11 @@ K80服务器
 IP：172.18.36.10
 
 账户：zhuge
-密码：zhuge_123
+密码：
 
 文件路径：/mnt/xfs1/home/zhuge/workspaces/cchen
 
-登陆进去后，ssh node010，其它节点不能用，需要的话我再去申请
+登陆进去后，ssh node010
 ```
 
 ## 极链云AI
@@ -103,5 +103,3 @@ IP：172.18.36.10
 https://cloud.videojj.com/center/hire
 
 ssh -p 30358 root@net.videojj.com
-
-ykEz3MVNrkHQwWFeHKzmspXaBNZ2ds33
