@@ -81,4 +81,27 @@ $ nvidia-smi
   $ scp -r cchen@10.0.11.222:GPUhelp/ localGUPhelp/
   ```
 
-  
+
+# GPU服务器用例
+
+## 自动化所：
+
+```
+K80服务器
+IP：172.18.36.10
+
+账户：zhuge
+密码：zhuge_123
+
+文件路径：/mnt/xfs1/home/zhuge/workspaces/cchen
+
+登陆进去后，ssh node010，其它节点不能用，需要的话我再去申请
+```
+
+## 极链云AI
+
+https://cloud.videojj.com/center/hire
+
+ssh -p 30358 root@net.videojj.com
+
+ykEz3MVNrkHQwWFeHKzmspXaBNZ2ds33

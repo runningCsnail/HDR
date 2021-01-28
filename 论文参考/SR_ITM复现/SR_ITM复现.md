@@ -2,6 +2,8 @@
 
 github地址：https://github.com/greatwallet/Pytorch-Implemented-Deep-SR-ITM
 
+markdown数学符号: https://blog.csdn.net/weixin_42047611/article/details/109325216
+
 ## 1.1. 环境准备：
 
 参考下述linux命令行：
@@ -9,7 +11,7 @@ github地址：https://github.com/greatwallet/Pytorch-Implemented-Deep-SR-ITM
 在gpu服务器cchen用户的hdr目录下，创建python3虚拟环境：
 
 ```python
-virtuanenv -p python3 SR_ITM
+virtualenv -p python3 SR_ITM
 ```
 
 启动虚拟环境
@@ -164,8 +166,12 @@ Deep SR-ITM: Joint Learning of Super-Resolution and Inverse Tone-Mapping for 4K 
   ## 2.2. 可能参考的文献
 
 + HDR [14] [15] ，[14]应用色域有限，只针对强光，[15]CNN自编码器结构，可能丢失重要的空间信息。
+
 + SR [16]提出CNN超分，[17]pixel shuffler像素转化; [18]residual learning残差学习; [19-20, 22-23]residual blocks残差块; [21-22]密集连接; [23]channel attention blocks通道注意块。
+
 + [26]分区域分析guided filter
+
+线性整流函数[27]
 
 ## 2.3. SR-ITM
 
@@ -184,4 +190,113 @@ $$
 **顶层：**$I_b$做颜色转换，拓展振幅(amplitude)，
 
 **底层：**细节层$I_d$保留高分辨率细节。
+
+### 2.3.2. 残差越过调试模块(ResSkipModBloch)
+
+Residual skip modulation blocks
+
+卷积层中的卷积操作在空间上是等变的，因为相同的卷积过滤被应用到了所有的像素位置。如果想增强局部差异，卷积操作的这一特点会限制网络的能力。故增加了注意力机制，逐像素调制图像信号。
+
++ Residual Blocks：
+
+  首先，$x$ 作为第 $i$ 个ResBlock模块的输入，输出：
+  $$
+  ResBlock_i(x) = (Conv \circ ReLU \circ Conv \circ ReLU)(x) + x = C_{RB}(x) + x
+  $$
+  
+
+<img src="SR_ITM图片/SR_ITM结构.png" alt="SR_ITM"  />
+
++ Shared Modulation Features($SMF_b$)
+  $$
+  SMF_b = (ReLU \circ Conv \circ ReLU \circ Conv \circ ReLU \circ Conv)(I_b^{in})
+  $$
+
++ Residual Modulation Block(ResModBlock)
+  $$
+  ResModBlock_i = C_{RB}(x) \odot {(Conv \circ ReLU \circ Conv)(SMF_b)} + x
+  $$
+  $\odot$ 是元素乘法
+
++ Feature Extraction(FE)
+  $$
+  FE_b = (ResModBlock_m \circ ResBlock_m^b \circ ... \circ ResModBlock_1 \circ ResBlock_1 \circ Conv)(I_b^{in})
+  $$
+
+...
+
++ 其他(详见论文)
+
+## 2.4. 实验结果
+
+所有的卷积过滤都是（3,3）大小，64输出通道，除了像素洗牌前的256通道。输出层3通道
+
+# 3. 代码设计
+
+## 3.1. dataset.py（数据设置）
+
+```python
+变量：
+SDR_dir #SDR文件路径
+HDR_dir #HDR文件路径
+phase #操作语句，默认是"train"训练，可以是"test"
+scale #帧数
+file_type #数据文件类型
+N_SDR #SDR的.png文件数量 = self.len
+
+类
+Dataset
+属性
+SDR_dir
+HDR_dir
+phase
+scale
+file_type
+
+函数
+__len__  #返回SDR图片数量
+__gititem__ #将输入的参数张量转化为列表
+```
+
+找到SDR_dir
+
+```python
+class Dataset(Dataset):
+    def __init__(self, SDR_dir, HDR_dir, phase="train", scale=None, file_type='png'):
+        self.SDR_dir = SDR_dir
+        self.HDR_dir = HDR_dir
+        self.phase = phase
+        self.scale = scale
+        self.file_type = file_type
+        
+        if phase != "train" and phase != "val" aand phase != "test":
+            raise ValueError("Expecting `phase` to be {}, {} or {} but got {}"
+                                .format("train", "val", "test", phase))
+
+        if phase == "val" and scale is None:
+                raise ValueError("scale must be specified if `phase` == {}"
+                                .format(phase))
+
+        #glob遍历检索文件，osp.join()加入文件路径，*.png
+        N_SDR = len(glob(osp.join(self.SDR_dir, '*.{}'.format(self.file_type))))
+
+        if self.phase != "test":
+            N_HDR = len(glob(osp.join(self.HDR_dir,'*.{}'.format(self.file_type))))
+            N_HDR = len(glob(osp.join(self.HDR_dir,'*.{}'.format(self.file_type))))
+        if N_SDR != N_HDR:
+            raise ValueError("SDR image amount ({}) and HDR image amount({}) are not identical".format(N_SDR, N_HDR))if N_SDR != N_HDR:
+            raise ValueError("SDR image amount ({}) and HDR image amount({}) are not identical".format(N_SDR, N_HDR))
+
+
+            self.len = N_SDR
+	
+    def __len__(self):
+        return self.len
+    
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist() #将张量转化为列表
+            
+        SDR_name = osp.join(self.SDR_dir, '{:06d}.{}'.format(idx + 1))
+```
 
